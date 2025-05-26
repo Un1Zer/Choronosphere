@@ -1,0 +1,145 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+'=================== 工具与管理 ===================
+class InitImage {
+    {static} + Image[][] IssacImg
+    {static} + Image[][] enemyImg
+    {static} + Image[][] roomBackgrounds
+}
+
+'=================== 窗口 ===================
+class HomeJFrame extends JFrame {
+    - JLayeredPane layeredPane
+    + HomeJFrame()
+    - initJFrame()
+    - initJButton()
+    - initText()
+    - initBackground()
+    - setButton(Button, int)
+    + main(String[])
+}
+
+class GameJFrame extends JFrame {
+    - Issac
+    - List<Room> rooms
+    - Timer
+    + GameJFrame()
+    - initJFrame()
+    - initGame()
+    - initJMenu()
+}
+
+class GameJPanel extends JPanel {
+    - GameJFrame
+    + GameJPanel(GameJFrame)
+    + paintComponent(Graphics)
+}
+'=================== 地图与房间 ===================
+class Room {
+    - int floorNumber
+    - int roomNumber
+    - List<Enemy> enemies
+    - List<Trap> traps
+    - List<Safe> safes
+    + void exitRoom(int,Issac)
+    + void removeEnemies(List<Enemy>)
+}
+
+class Trap {
+    - int damage
+    - boolean isActive
+    - Rectangle hitbox
+    + Trap(int, Rectangle)
+    + void activate()
+}
+
+class Safe {
+    - List<Item> storedItems
+    + Safe()
+    + void open()
+    + void storeItem(Item)
+    + List<Item> getItems()
+}
+
+'=================== 角色与敌人 ===================
+abstract class Entity {
+    - Image img
+    - int x
+    - int y
+    - int width
+    - int height
+    - int health;
+    - int speed;
+    - int attack;
+    - GameJFrame frame
+    + Entity()
+    + void paintSelf(Graphics)
+    + void updateState()
+    + void hitEntity(int,Entity)
+    + void beHit(int attack)
+}
+
+class Issac extends Entity {
+    - Inventory inventory
+    + Issac()
+    + void controlDirection(KeyEvent)
+    + void useItem(Item)
+    + void pickItem(Item)
+}
+
+class Enemy extends Entity {
+    - int visionRange
+    + Enemy()
+    + void trackPlayer(Issac)
+    + void update()
+}
+
+class Boss extends Enemy {
+    + Boss()
+    + void useSpecialSkill()
+}
+
+'=================== 道具与背包 ===================
+class Inventory {
+    - int capacity
+    - List<Item> items
+    + Inventory(int)
+    + void addItem(Item)
+    + boolean hasItem(String)
+    + Item getItem(String)
+    + void removeItem(Item)
+}
+
+abstract class Item {
+    - String name
+    - String description
+    + Item()
+    + void work()
+}
+
+class CollisionManager{
+    -int[][] collisionMap
+    -int mapRows
+    -int mapCols
+    +boolean isCollision(int, int, int, int)
+    +boolean isAtExit(int, int, int, int)
+    +int getExitNumber(int,int,int,int)
+}
+
+'=================== 关联关系 ===================
+GameJFrame "1"-->"1" Issac
+GameJFrame "1"*--"1" GameJPanel
+GameJFrame "1"-->"1" CollisionManager
+Issac "1"-->"1" Inventory
+Inventory "1"*--"many" Item
+
+GameJFrame "1"*--"many" Room
+Room "1"*--"0..*" Enemy
+Room "1"*--"0..*" Trap
+Room "1"*--"0..*" Safe
+Safe "1"*--"many" Item
+
+
+@enduml
+
