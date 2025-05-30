@@ -259,8 +259,8 @@ public abstract class Entity {
     //图像绘制、HitBox 和视觉对齐三者之间的 “坐标参考系”错位问题
     protected void drawImg(Image img,int frame,Graphics g) {
         // 调试用：绘制碰撞框（HitBox）
-        g.setColor(Color.RED);
-        g.drawRect(getX(), getY(), getWidth(), getHeight());
+        //g.setColor(Color.RED);
+        //g.drawRect(getX(), getY(), getWidth(), getHeight());
 
         // 计算偏移量，使图像中心对齐到碰撞框中心
         int offsetX = (FRAME_WIDTH - getWidth()) / 2;
